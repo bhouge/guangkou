@@ -78,14 +78,28 @@ socket.on('max message', function(msg){
 				case 'pitchMax':
 					sliderID = 6;
 					break;
+				case 'onOff':
+				 	sliderID = -1;
+					break;
 			}
-			var sliderName = 'slider' + sliderID;
-			var textFieldName = 'textField' + sliderID;
-			var slider = document.getElementById(sliderName);
-			var textField = document.getElementById(textFieldName);
-			slider.value = sliderValue * 100;
-			textField.value = sliderValue;
-			console.log('slider ' + sliderID + ' value is ' + sliderValue);
+			if (sliderID >= 0 && sliderID <= 6) {
+				var sliderName = 'slider' + sliderID;
+				var textFieldName = 'textField' + sliderID;
+				var slider = document.getElementById(sliderName);
+				var textField = document.getElementById(textFieldName);
+				slider.value = sliderValue * 100;
+				textField.value = sliderValue;
+				emitControlMessage('/slider/' + sliderID + " " + sliderValue);
+				console.log('slider ' + sliderID + ' value is ' + sliderValue);
+			} else if (sliderID == -1) {
+				if (sliderValue == 1) {
+					onOffButton.innerHTML = 'on';
+					emitControlMessage('/metro 1');
+				} else {
+					onOffButton.innerHTML = 'off';
+					emitControlMessage('/metro 0');
+				}
+			}
 		}
 	}
 });
