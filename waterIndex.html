@@ -126,7 +126,7 @@ function testSound(index) {
 	var source = audioCtx.createBufferSource();
 	source.buffer = audioBuffers[index];
 	source.connect(audioCtx.destination);
-    source.start(audioCtx.currentTime);
+  source.start(audioCtx.currentTime);
 }
 
 function setupSynth() {
@@ -150,7 +150,7 @@ listenButton.onclick = function() {
 	setupSynth();
 	listenButton.className = "on";
 	if (listenButtonEnabled) {
-		//testSound(0);
+		testSound(1);
 	}
 	listenButton.innerHTML = "Listening 正在听...";
 };
@@ -226,6 +226,15 @@ function setSliderValue(sliderIndex, sliderValue) {
 			console.log("unrecognized slider");
 			break;
 	}
+}
+
+//keeping this as a way to test sounds if needed
+function playBuffer(index) {
+	var source = audioCtx.createBufferSource();
+	source.buffer = audioBuffers[index];
+	gainNode.gain.value = 1.0;
+	source.connect(gainNode);
+  source.start(audioCtx.currentTime);
 }
 
 function stopEverything() {

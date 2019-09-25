@@ -75,6 +75,8 @@ io.on('connection', function(socket){
 	    	console.log("listener connected; listeners: " + listenerCount);
 	    	fileToPush = "audio/stream.mp3";
     		pushSoundToClient(fileToPush, 0, socket);
+				fileToPush = "audio/drip01.ogg";
+    		pushSoundToClient(fileToPush, 1, socket);
 	    } else if (msg == 'supreme leader') {
 	    	socket.birdType = msg;
 	    	supremeLeaderCount++;
