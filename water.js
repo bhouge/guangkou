@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 
 var app = require('express')();
@@ -10,6 +10,8 @@ var io = require('socket.io')(http);
 var listenerCount = 0;
 var supremeLeaderCount = 0;
 
+var controllerSocketID;
+
 
 app.get('/', function(req, res){
 	  res.sendFile(__dirname + '/waterIndex.html');
@@ -17,6 +19,10 @@ app.get('/', function(req, res){
 
 app.get('/controller', function(req, res){
 	res.sendFile(__dirname + '/waterCommand.html');
+});
+
+app.get('/max', function(req, res){
+	res.sendFile(__dirname + '/waterMax.html');
 });
 
 //remember, this fun regular expression is what allows you to load resources by name (e.g., "scripts/IntermittentSound.js" from served html files
@@ -48,19 +54,32 @@ io.on('connection', function(socket){
 	    io.emit('message', msg);
 	    console.log('message: ' + msg);
   });
+
+	socket.on('max message', function(msg){
+		console.log('max message: ' + msg);
+		socket.broadcast.to(controllerSocketID).emit('max message', msg);
+		/*
+	  	var timeStamp = Date.now();
+	  	var timeStampMessage = '/timeStamp ' + msg + ':' + timeStamp;
+	  	//socket.emit(), not io.emit(), which sends to everybody
+	  	socket.emit('sync message', timeStampMessage);
+
+			*/
+  });
   socket.on('i am', function(msg){
 	    //io.emit('message', msg);
 	  	//you could add a property that is name, so we can know who's disconnecting as well
 	    if (msg == 'listener') {
 	    	socket.birdType = msg;
 	    	listenerCount++;
-	    	console.log("listener connected; listeners: " + listenerCount); 
+	    	console.log("listener connected; listeners: " + listenerCount);
 	    	fileToPush = "audio/stream.mp3";
     		pushSoundToClient(fileToPush, 0, socket);
 	    } else if (msg == 'supreme leader') {
 	    	socket.birdType = msg;
 	    	supremeLeaderCount++;
 	    	console.log("supreme leader connected; supreme leaders: " + supremeLeaderCount);
+				controllerSocketID = socket.id;
 	    } else if (msg == 'max patch') {
 	    	socket.birdType = msg;
 	    	console.log("max patch connected");
@@ -130,4 +149,3 @@ fs.readFile(fileToRead, function(err, buf){
 http.listen(8300, function(){
   console.log('listening on *:8300');
 });
-

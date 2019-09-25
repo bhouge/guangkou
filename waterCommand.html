@@ -49,6 +49,38 @@ socket.on('get type', function(msg){
 	//console.log("client's secret message is " + msg);
 	socket.emit('i am', "supreme leader");
 });
+socket.on('max message', function(msg){
+	console.log("control message from max is " + msg);
+	var msgArray = msg.split(' ');
+	if (msgArray.length >= 3) {
+		if (msgArray[0] == 'water') {
+			var sliderID;
+			switch (msgArray[1]) {
+				case 'density':
+					sliderID = 0;
+					break;
+				case 'minGrainDur':
+					sliderID = 1;
+					break;
+				case 'maxGrainDur':
+					sliderID = 2;
+					break;
+				case 'minVolDur':
+					sliderID = 3;
+					break;
+				case 'maxVolDur':
+					sliderID = 4;
+					break;
+				case 'minPitch':
+					sliderID = 5;
+					break;
+				case 'maxPitch':
+					sliderID = 6;
+					break;
+			}
+		}
+	}
+});
 
 var panicButton = document.getElementById('panic');
 panicButton.onclick = function() {

@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>LIKE WATER FOR MAX</title>
+</head>
+<body>
+
+<h1>Hi, Max! 光口夜雨作曲链接成功!</h1>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+window.max.bindInlet('gettime', function (a) {
+    socket.emit('get time', a);
+});
+
+window.max.bindInlet('maxMessage', function (a) {
+    socket.emit('max message', a);
+});
+
+var socket = io();
+socket.on('get type', function(msg){
+	//console.log("client's secret message is " + msg);
+	socket.emit('i am', "max patch");
+});
+
+socket.on('control message', function(msg){
+	window.max.outlet(msg);
+});
+
+socket.on('sync message', function(msg){
+	window.max.outlet(msg);
+});
+
+/*
+//output a string
+window.max.outlet('foo');
+
+// output a list
+window.max.outlet('foo', 1, 2);
+
+// output contents of array with prepended 'foo' message
+var ar = [1, 2, 3, 4];
+window.max.outlet.apply(window.max, ['foo'].concat(ar));
+*/
+
+</script>
+
+</body>
+</html>
