@@ -54,30 +54,38 @@ socket.on('max message', function(msg){
 	var msgArray = msg.split(' ');
 	if (msgArray.length >= 3) {
 		if (msgArray[0] == 'water') {
+			var sliderValue = parseFloat(msgArray[2]);
 			var sliderID;
 			switch (msgArray[1]) {
 				case 'density':
 					sliderID = 0;
 					break;
-				case 'minGrainDur':
+				case 'grainDurMin':
 					sliderID = 1;
 					break;
-				case 'maxGrainDur':
+				case 'grainDurMax':
 					sliderID = 2;
 					break;
-				case 'minVolDur':
+				case 'volMin':
 					sliderID = 3;
 					break;
-				case 'maxVolDur':
+				case 'volMax':
 					sliderID = 4;
 					break;
-				case 'minPitch':
+				case 'pitchMin':
 					sliderID = 5;
 					break;
-				case 'maxPitch':
+				case 'pitchMax':
 					sliderID = 6;
 					break;
 			}
+			var sliderName = 'slider' + sliderID;
+			var textFieldName = 'textField' + sliderID;
+			var slider = document.getElementById(sliderName);
+			var textField = document.getElementById(textFieldName);
+			slider.value = sliderValue * 100;
+			textField.value = sliderValue;
+			console.log('slider ' + sliderID + ' value is ' + sliderValue);
 		}
 	}
 });
