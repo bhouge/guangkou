@@ -30,10 +30,8 @@
 </head>
 <body>
 
-<h1>光口夜雨<br>Night Rain</h1>
-
 <div id="controlButtons" style = "text-align: center">
-<button id="listen" class="off" > Loading </button>
+<button id="listen" class="off" > Loading 正在加载... </button>
 </div>
 
 <h3>
@@ -41,6 +39,8 @@ Press "Listen" to begin.
 Turn your phone upside down to help the sound propagate and poke it periodically to keep it from going to sleep during the performance.
 Chrome or Firefox are the recommended browsers on Android devices.
 </h3>
+
+<h1>光口夜雨<br>Night Rain</h1>
 
 <h2>
 峡江清空峡雨急<br>
@@ -53,12 +53,12 @@ Chrome or Firefox are the recommended browsers on Android devices.
 不识春江夜雨声<br><br>
 Gorge river quiet and empty, gorge rain rushes in<br>
 Cold sound at midnight rustling, whistling<br>
-Glass bowl surface, 10,000 pearls dance<br>
-Each grain, each sound, clear to the bone<br>
+Glass bowl surface, ten thousand pearls dance<br>
+Each grain, each sound, enters clear to the bone<br>
 Mid-dream, scratch head, get up to listen<br>
 Listen coming and going until daylight<br>
 A lifetime of listening to rain, now hair is white<br>
-Still do not know spring river night rain sound<br><br>
+Still do not know the sound of night rain on a spring river<br><br>
 By Song Dynasty poet Yang Wanli 杨万里 (1127-1206)<br>
 Translation by Ben Houge
 </h2>
@@ -152,7 +152,7 @@ listenButton.onclick = function() {
 	if (listenButtonEnabled) {
 		//testSound(0);
 	}
-	listenButton.innerHTML = "Listening...";
+	listenButton.innerHTML = "Listening 正在听...";
 };
 
 function setSliderValue(sliderIndex, sliderValue) {
