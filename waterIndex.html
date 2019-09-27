@@ -65,6 +65,7 @@ Translation by Ben Houge
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="scripts/GranularSynth.js"></script>
+<script src="scripts/Drips.js"></script>
 
 <script type="text/javascript">
 var socket = io();
@@ -109,17 +110,32 @@ socket.on('get type', function(msg){
 	//console.log("client's secret message is " + msg);
 	socket.emit('i am', "listener");
 });
+socket.on('sending audio', function(msg){
+	console.log('this many audio files to receive: ' + msg);
+	//alert('this many audio files: ' + msg);
+	audioFilesToReceive = msg;
+});
 socket.on('audio', function(msg){
-    console.log('audio received!');
-    audioCtx.decodeAudioData(msg.buffer, function(buffer) {
-    	audioBuffers[msg.index] = buffer;
-    	//console.log(audioBuffers);
-    	buffersAreLoaded = true;
-      },
-      function(error) {
-          console.error('decodeAudioData error', error);
-      });
-    listenButton.innerHTML = "Listen 倾听";
+
+  console.log('audio received!');
+  audioCtx.decodeAudioData(msg.buffer, function(buffer) {
+  	audioBuffers[msg.index] = buffer;
+  	//console.log(audioBuffers);
+  	//buffersAreLoaded = true;
+		console.log('buffer ' + msg.index + ' loaded');
+		audioFilesToReceive--;
+		if (audioFilesToReceive <= 0) {
+			console.log('all buffers loaded');
+			//quick spot check
+			//playBuffer('windchimes');
+			buffersAreLoaded = true;
+			//initializeInstruments();
+		}
+  },
+  function(error) {
+		console.error('decodeAudioData error', error);
+  });
+  listenButton.innerHTML = "Listen 倾听";
 });
 
 function testSound(index) {
@@ -132,8 +148,28 @@ function testSound(index) {
 function setupSynth() {
 	//creating our GranularSynthesizer
 	//buffer, grainsPerSec, minGrainDur, maxGrainDur, minVol, maxVol, minPitch, maxPitch
-	waterSynth = new GranularSynth(audioBuffers[0], 0.667, 5., 7., 0.7, 1., 0.9, 1.1);
+	waterSynth = new GranularSynth(audioBuffers['stream'], 0.667, 5., 7., 0.7, 1., 0.9, 1.1);
 	waterSynth.connect(gainNode);
+	//waterSynth.play();
+}
+
+function setupDrips() {
+	//creating our Drips
+	//supply an object that represents valid buffers to play, with names as keys
+	var dripBuffers = {};
+	//var dripName = 'drip002';
+	for (var drop = 1; drop < 37; drop++) {
+		var fileBufferName;
+		if (drop < 10) {
+			fileBufferName = 'drip00' + drop;
+		} else {
+			fileBufferName = 'drip0' + drop;
+		}
+		dripBuffers[fileBufferName] = audioBuffers[fileBufferName];
+	}
+	//buffers, density, volMin, volMax, pitchMin, pitchMax, startWithPause
+	drips = new Drips(dripBuffers, 1.0, 0.25, 1.0, 0.8, 1.2, true);
+	drips.connect(gainNode);
 	//waterSynth.play();
 }
 
@@ -148,9 +184,19 @@ listenButton.className = "off";
 listenButton.onclick = function() {
 	//consider adding a test so that the button won't make noise once the piece is underway
 	setupSynth();
+	setupDrips();
 	listenButton.className = "on";
 	if (listenButtonEnabled) {
-		testSound(1);
+		var testSoundName;
+		var dripID = Math.floor(Math.random() * 37);
+		if (dripID < 10) {
+			testSoundName = 'drip00' + dripID;
+		} else {
+			testSoundName = 'drip0' + dripID;
+		}
+		console.log('testing sound ' + testSoundName);
+		testSound(testSoundName);
+		drips.play();
 	}
 	listenButton.innerHTML = "Listening 正在听...";
 };
@@ -252,10 +298,13 @@ gainNode.connect(audioCtx.destination);
 gainNode.gain.value = 1.0;
 
 var audioBuffers = [];
+var audioFilesToReceive = 0;
 var buffersAreLoaded = false;
 
 //delaring our granular synth, to be initialized after audio is loaded.
 var waterSynth;
+//ditto drips
+var drips;
 
 </script>
 

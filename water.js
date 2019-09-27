@@ -73,10 +73,29 @@ io.on('connection', function(socket){
 	    	socket.birdType = msg;
 	    	listenerCount++;
 	    	console.log("listener connected; listeners: " + listenerCount);
-	    	fileToPush = "audio/stream.mp3";
-    		pushSoundToClient(fileToPush, 0, socket);
-				fileToPush = "audio/drip01.ogg";
-    		pushSoundToClient(fileToPush, 1, socket);
+
+				//stream + 36 drip sounds...
+				var numberOfFilesToSend = 37;
+
+				socket.emit('sending audio', numberOfFilesToSend);
+				var directoryPrefix = '/audio/compressed/';
+				//fyi __dirname gives the directory of the currently running file
+				//but I don't seem to need it.
+
+	    	var fileToPush = __dirname + directoryPrefix + "stream.mp3";
+    		pushSoundToClient(fileToPush, 'stream', socket);
+
+				for (var drop = 1; drop < 37; drop++) {
+					var fileBufferName;
+					if (drop < 10) {
+						fileBufferName = 'drip00' + drop;
+					} else {
+						fileBufferName = 'drip0' + drop;
+					}
+					fileToPush = __dirname + directoryPrefix + fileBufferName + '.mp3';
+					//fileToPush = "audio/drip01.ogg";
+	    		pushSoundToClient(fileToPush, fileBufferName, socket);
+				}
 	    } else if (msg == 'supreme leader') {
 	    	socket.birdType = msg;
 	    	supremeLeaderCount++;
@@ -128,7 +147,7 @@ function pushSoundToClient(filename, bufferIndex, socket) {
 			console.log("Error: " + err);
 		} else {
 			//console.log('audio index:' + bufferIndex);
-		    socket.emit('audio', { audio: true, buffer: buf, index: bufferIndex });
+		  socket.emit('audio', { audio: true, buffer: buf, index: bufferIndex });
 		}
 	});
 }
