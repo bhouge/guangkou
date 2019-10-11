@@ -6,14 +6,14 @@
 </head>
 <body>
 
-<div id="buttons">
+<h2>Water Controls</h2>
+
+<div id="waterButtons">
 
 <button id="panic">panic</button>
 <button id="onOff">off</button>
 
 </div>
-
-<div id="waterButtons"></div>
 
 density (grains per second)<br>
 <input id="slider0" type="range" min="10" max="5000" value="67" oninput="showSliderValuePercent(this)" />
@@ -39,6 +39,42 @@ min/max pitch<br>
 <br>
 <input id="slider6" type="range" min="25" max="800" value="110" oninput="showSliderValuePercent(this)" />
 <input id="textField6" type="text" value="1.1" onchange="textFieldChangeValuePercent(this)" />
+<br>
+
+
+<h2>Drip Controls</h2>
+
+<div id="dripButtons">
+
+<button id="panic2">panic</button>
+<button id="onOff2">off</button>
+
+</div>
+
+density (grains per second)<br>
+<input id="slider10" type="range" min="10" max="5000" value="67" oninput="showSliderValuePercent(this)" />
+<input id="textField10" type="text" value="0.67" onchange="textFieldChangeValuePercent(this)" />
+<br>
+min/max grain duration<br>
+<input id="slider11" type="range" min="10" max="500" value="500" oninput="showSliderValuePercent(this)" />
+<input id="textField11" type="text" value="5." onchange="textFieldChangeValuePercent(this)" />
+<br>
+<input id="slider12" type="range" min="10" max="700" value="700" oninput="showSliderValuePercent(this)" />
+<input id="textField12" type="text" value="7." onchange="textFieldChangeValuePercent(this)" />
+<br>
+min/max volume<br>
+<input id="slider13" type="range" min="0" max="100" value="70" oninput="showSliderValuePercent(this)" />
+<input id="textField13" type="text" value="0.7" onchange="textFieldChangeValuePercent(this)" />
+<br>
+<input id="slider14" type="range" min="0" max="100" value="100" oninput="showSliderValuePercent(this)" />
+<input id="textField14" type="text" value="1." onchange="textFieldChangeValuePercent(this)" />
+<br>
+min/max pitch<br>
+<input id="slider15" type="range" min="25" max="800" value="90" oninput="showSliderValuePercent(this)" />
+<input id="textField15" type="text" value="0.9" onchange="textFieldChangeValuePercent(this)" />
+<br>
+<input id="slider16" type="range" min="25" max="800" value="110" oninput="showSliderValuePercent(this)" />
+<input id="textField16" type="text" value="1.1" onchange="textFieldChangeValuePercent(this)" />
 <br>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -104,21 +140,43 @@ socket.on('max message', function(msg){
 	}
 });
 
+//FYI this does nothing
 var panicButton = document.getElementById('panic');
 panicButton.onclick = function() {
 	//emitControlMessage('/panic 1');
 	//nah, this should be global
-	socket.emit('control message', '/panic 1');
+	//socket.emit('control message', '/panic 1');
+	console.log("This button does nothing.");
 };
 
 var onOffButton = document.getElementById('onOff');
 onOffButton.onclick = function() {
 	if (onOffButton.innerHTML == 'off') {
 		onOffButton.innerHTML = 'on';
-		emitControlMessage('/metro 1');
+		emitControlMessage('/metro1 1');
 	} else {
 		onOffButton.innerHTML = 'off';
-		emitControlMessage('/metro 0');
+		emitControlMessage('/metro1 0');
+	}
+};
+
+//This also does nothing
+var panicButton2 = document.getElementById('panic2');
+panicButton2.onclick = function() {
+	//emitControlMessage('/panic 1');
+	//nah, this should be global
+	//socket.emit('control message', '/panic2 1');
+	console.log("This button does nothing.");
+};
+
+var onOffButton2 = document.getElementById('onOff2');
+onOffButton2.onclick = function() {
+	if (onOffButton2.innerHTML == 'off') {
+		onOffButton2.innerHTML = 'on';
+		emitControlMessage('/metro2 1');
+	} else {
+		onOffButton2.innerHTML = 'off';
+		emitControlMessage('/metro2 0');
 	}
 };
 

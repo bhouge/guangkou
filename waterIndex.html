@@ -78,20 +78,40 @@ socket.on('control message', function(msg){
 	if (msgArray[1].slice(0, 5) != "panic") {
 		if (msgArray[1] == "water") {
 			if (msgArray[2].slice(0, 5) == "metro") {
-				if (listenButton.className == "on") {
-					if (msgArray[2].slice(-1) == '0') {
-						console.log("Turning metronome off.");
-						if (waterSynth.isPlaying) {
-							waterSynth.stop();
+				console.log(msgArray[2]);
+				if (msgArray[2][5] == "1") {
+					console.log("turning on water...");
+					if (listenButton.className == "on") {
+						if (msgArray[2].slice(-1) == '0') {
+							console.log("Turning water metronome off.");
+							if (waterSynth.isPlaying) {
+								waterSynth.stop();
+							}
+						} else {
+							console.log("Turning water metronome on.");
+							//testSound(0);
+							if (!waterSynth.isPlaying) {
+								waterSynth.play();
+							}
 						}
-					} else {
-						console.log("Turning metronome on.");
-						//testSound(0);
-						if (!waterSynth.isPlaying) {
-							waterSynth.play();
+					}
+				} else {
+					if (listenButton.className == "on") {
+						if (msgArray[2].slice(-1) == '0') {
+							console.log("Turning drip metronome off.");
+							if (drips.isPlaying) {
+								drips.stop();
+							}
+						} else {
+							console.log("Turning drip metronome on.");
+							//testSound(0);
+							if (!drips.isPlaying) {
+								drips.play();
+							}
 						}
 					}
 				}
+
 			}
 			if (msgArray[2] == "slider") {
 				var sliderMsgArray = msgArray[3].split(' ');
@@ -196,7 +216,7 @@ listenButton.onclick = function() {
 		}
 		console.log('testing sound ' + testSoundName);
 		testSound(testSoundName);
-		drips.play();
+		//drips.play();
 	}
 	listenButton.innerHTML = "Listening 正在听...";
 };
