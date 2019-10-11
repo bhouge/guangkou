@@ -288,6 +288,21 @@ function setSliderValue(sliderIndex, sliderValue) {
 			//console.log(value);
 			waterSynth.maxPitch = sliderValueAsFloat;
 			break;
+		case 10:
+			drips.density = sliderValueAsFloat;
+			break;
+		case 11:
+			drips.volMin = sliderValueAsFloat;
+			break;
+		case 12:
+			drips.volMax = sliderValueAsFloat;
+			break;
+		case 13:
+			drips.pitchMin = sliderValueAsFloat;
+			break;
+		case 14:
+			drips.pitchMax = sliderValueAsFloat;
+			break;
 		default:
 			console.log("unrecognized slider");
 			break;
