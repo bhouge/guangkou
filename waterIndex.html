@@ -59,8 +59,8 @@ Mid-dream, scratch head, get up to listen<br>
 Listen coming and going until daylight<br>
 A lifetime of listening to rain, now hair is white<br>
 Still do not know the sound of night rain on a spring river<br><br>
-By Song Dynasty poet Yang Wanli 杨万里 (1127-1206)<br>
-Translation by Ben Houge
+Poem by Song Dynasty poet Yang Wanli 杨万里 (1127-1206)<br>
+Music and translation by Ben Houge
 </h2>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -80,7 +80,7 @@ socket.on('control message', function(msg){
 			if (msgArray[2].slice(0, 5) == "metro") {
 				console.log(msgArray[2]);
 				if (msgArray[2][5] == "1") {
-					console.log("turning on water...");
+					//console.log("attempting to turn water on or off...");
 					if (listenButton.className == "on") {
 						if (msgArray[2].slice(-1) == '0') {
 							console.log("Turning water metronome off.");
@@ -111,7 +111,6 @@ socket.on('control message', function(msg){
 						}
 					}
 				}
-
 			}
 			if (msgArray[2] == "slider") {
 				var sliderMsgArray = msgArray[3].split(' ');

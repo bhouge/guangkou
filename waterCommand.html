@@ -82,9 +82,9 @@ socket.on('max message', function(msg){
 	console.log("control message from max is " + msg);
 	var msgArray = msg.split(' ');
 	if (msgArray.length >= 3) {
+		var sliderValue = parseFloat(msgArray[2]);
+		var sliderID;
 		if (msgArray[0] == 'water') {
-			var sliderValue = parseFloat(msgArray[2]);
-			var sliderID;
 			switch (msgArray[1]) {
 				case 'density':
 					sliderID = 0;
@@ -111,23 +111,53 @@ socket.on('max message', function(msg){
 				 	sliderID = -1;
 					break;
 			}
-			if (sliderID >= 0 && sliderID <= 6) {
-				var sliderName = 'slider' + sliderID;
-				var textFieldName = 'textField' + sliderID;
-				var slider = document.getElementById(sliderName);
-				var textField = document.getElementById(textFieldName);
-				slider.value = sliderValue * 100;
-				textField.value = sliderValue;
-				emitControlMessage('/slider/' + sliderID + " " + sliderValue);
-				console.log('slider ' + sliderID + ' value is ' + sliderValue);
-			} else if (sliderID == -1) {
-				if (sliderValue == 1) {
-					onOffButton.innerHTML = 'on';
-					emitControlMessage('/metro 1');
-				} else {
-					onOffButton.innerHTML = 'off';
-					emitControlMessage('/metro 0');
-				}
+		} else if (msgArray[0] == "drips") {
+			//more variable assignment
+			switch (msgArray[1]) {
+				case 'density':
+					sliderID = 10;
+					break;
+				case 'volMin':
+					sliderID = 11;
+					break;
+				case 'volMax':
+					sliderID = 12;
+					break;
+				case 'pitchMin':
+					sliderID = 13;
+					break;
+				case 'pitchMax':
+					sliderID = 14;
+					break;
+				case 'onOff':
+				 	sliderID = -2;
+					break;
+			}
+		}
+		if ((sliderID >= 0 && sliderID <= 6) || (sliderID >= 10 && sliderID <= 14)) {
+			var sliderName = 'slider' + sliderID;
+			var textFieldName = 'textField' + sliderID;
+			var slider = document.getElementById(sliderName);
+			var textField = document.getElementById(textFieldName);
+			slider.value = sliderValue * 100;
+			textField.value = sliderValue;
+			emitControlMessage('/slider/' + sliderID + " " + sliderValue);
+			console.log('slider ' + sliderID + ' value is ' + sliderValue);
+		} else if (sliderID == -1) {
+			if (sliderValue == 1) {
+				onOffButton.innerHTML = 'on';
+				emitControlMessage('/metro1 1');
+			} else {
+				onOffButton.innerHTML = 'off';
+				emitControlMessage('/metro1 0');
+			}
+		} else if (sliderID == -2) {
+			if (sliderValue == 1) {
+				onOffButton.innerHTML = 'on';
+				emitControlMessage('/metro2 1');
+			} else {
+				onOffButton.innerHTML = 'off';
+				emitControlMessage('/metro2 0');
 			}
 		}
 	}
