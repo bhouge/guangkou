@@ -13,6 +13,8 @@ var maxPatchCount = 0;
 
 var controllerSocketID;
 
+var currentState = {};
+
 
 app.get('/', function(req, res){
 	  res.sendFile(__dirname + '/waterIndex.html');

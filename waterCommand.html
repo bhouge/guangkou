@@ -141,22 +141,27 @@ socket.on('max message', function(msg){
 			var textField = document.getElementById(textFieldName);
 			slider.value = sliderValue * 100;
 			textField.value = sliderValue;
+			currentState[sliderID] = sliderValue;
 			emitControlMessage('/slider/' + sliderID + " " + sliderValue);
 			console.log('slider ' + sliderID + ' value is ' + sliderValue);
 		} else if (sliderID == -1) {
 			if (sliderValue == 1) {
 				onOffButton.innerHTML = 'on';
+				currentState[19] = 1;
 				emitControlMessage('/metro1 1');
 			} else {
 				onOffButton.innerHTML = 'off';
+				currentState[19] = 0;
 				emitControlMessage('/metro1 0');
 			}
 		} else if (sliderID == -2) {
 			if (sliderValue == 1) {
-				onOffButton.innerHTML = 'on';
+				onOffButton2.innerHTML = 'on';
+				currentState[18] = 1;
 				emitControlMessage('/metro2 1');
 			} else {
-				onOffButton.innerHTML = 'off';
+				onOffButton2.innerHTML = 'off';
+				currentState[18] = 0;
 				emitControlMessage('/metro2 0');
 			}
 		}
@@ -176,11 +181,14 @@ var onOffButton = document.getElementById('onOff');
 onOffButton.onclick = function() {
 	if (onOffButton.innerHTML == 'off') {
 		onOffButton.innerHTML = 'on';
+		currentState[19] = 1;
 		emitControlMessage('/metro1 1');
 	} else {
 		onOffButton.innerHTML = 'off';
+		currentState[19] = 0;
 		emitControlMessage('/metro1 0');
 	}
+	//console.log(currentState);
 };
 
 //This also does nothing
@@ -196,11 +204,14 @@ var onOffButton2 = document.getElementById('onOff2');
 onOffButton2.onclick = function() {
 	if (onOffButton2.innerHTML == 'off') {
 		onOffButton2.innerHTML = 'on';
+		currentState[18] = 1;
 		emitControlMessage('/metro2 1');
 	} else {
 		onOffButton2.innerHTML = 'off';
+		currentState[18] = 0;
 		emitControlMessage('/metro2 0');
 	}
+	//console.log(currentState);
 };
 
 /*
@@ -228,6 +239,7 @@ function showSliderValue(sender)
 	var index = sender.id.slice(6);
 	var correspondingTextField = document.getElementById("textField" + index);
 	correspondingTextField.value = sender.value;
+	currentState[index] = sender.value;
 	emitControlMessage('/slider/' + index + " " + sender.value);
 }
 
@@ -235,6 +247,7 @@ function textFieldChangeValue(sender) {
 	var index = sender.id.slice(9);
 	var correspondingSlider = document.getElementById("slider" + index);
 	correspondingSlider.value = sender.value;
+	currentState[index] = sender.value;
 	emitControlMessage('/slider/' + index + " " + sender.value);
 }
 
@@ -244,6 +257,7 @@ function showSliderValuePercent(sender)
 	var correspondingTextField = document.getElementById("textField" + index);
 	var scaledValue = (sender.value / 100.);
 	correspondingTextField.value = scaledValue;
+	currentState[index] = scaledValue;
 	emitControlMessage('/slider/' + index + " " + scaledValue);
 }
 
@@ -251,14 +265,52 @@ function textFieldChangeValuePercent(sender) {
 	var index = sender.id.slice(9);
 	var correspondingSlider = document.getElementById("slider" + index);
 	correspondingSlider.value = sender.value * 100;
+	currentState[index] = sender.value;
 	emitControlMessage('/slider/' + index + " " + sender.value);
 }
 
 function emitControlMessage(cm) {
 	socket.emit('control message', '/water' + cm);
 	console.log(cm);
+	console.log("currentState: " + currentState);
 }
 
+//warning: this data is being defined two places: here and in sliders' original states...
+//water state
+var currentState = [0.667, 5.0, 7.0, 0.7, 1.0, 0.9, 1.1];
+//drips state
+currentState[10] = 0.667;
+currentState[11] = 0.7;
+currentState[12] = 1.0;
+currentState[13] = 0.9;
+currentState[14] = 1.1;
+//button state (don't forget magic ID's for these...)
+//think 20 - 1 for metro1 and 20 - 2 for metro2
+//this is kind of embarrassing...
+currentState[18] = 0;
+currentState[19] = 0;
+
+
+var currentStateObjectWhichWereNotUsing = {
+	water : {
+		onOff: 0,
+		density: 0.667,
+		grainDurMin: 5.0,
+		grainDurMax: 7.0,
+		volMin: 0.7,
+		volMax: 1.0,
+		pitchMin: 0.9,
+		pitchMax: 1.1
+	},
+	drips : {
+		onOff: 0,
+		density: 0.667,
+		volMin: 0.7,
+		volMax: 1.0,
+		pitchMin: 0.9,
+		pitchMax: 1.1
+	}
+};
 
 </script>
 
