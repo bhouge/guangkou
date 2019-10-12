@@ -9,6 +9,7 @@ var io = require('socket.io')(http);
 
 var listenerCount = 0;
 var supremeLeaderCount = 0;
+var maxPatchCount = 0;
 
 var controllerSocketID;
 
@@ -40,7 +41,10 @@ io.on('connection', function(socket){
 	  } else if (socket.birdType == "supreme leader") {
 		  supremeLeaderCount--;
 		  console.log('supreme leader disconnected; supreme leaders remaining: ' + supremeLeaderCount);
-	  } else {
+	  } else if (socket.birdType == "max patch") {
+			maxPatchCount--;
+			console.log('max patch disconnected; max patches remaining: ' + maxPatchCount);
+		} else {
 		  console.log('mystery user disconnected');
 	  }
   });
@@ -103,7 +107,8 @@ io.on('connection', function(socket){
 				controllerSocketID = socket.id;
 	    } else if (msg == 'max patch') {
 	    	socket.birdType = msg;
-	    	console.log("max patch connected");
+				maxPatchCount++;
+	    	console.log("max patch connected; max patches: " + maxPatchCount);
 	    } else {
 	    	console.log("mystery user connected");
 	    }
