@@ -13,7 +13,8 @@ var maxPatchCount = 0;
 
 var controllerSocketID;
 
-var currentState = {};
+//this is embarrassing; fix for the future...
+var currentState = [0.667,5,7,0.7,1,0.9,1.1,,,,0.667,0.7,1,0.9,1.1,,,,0,0];
 
 
 app.get('/', function(req, res){
@@ -51,9 +52,17 @@ io.on('connection', function(socket){
 	  }
   });
   socket.on('control message', function(msg){
-	  //these are coming from the controller and going to all listeners
-	  console.log('control message: ' + msg);
-	  io.emit('control message', msg);
+	//these are coming from the controller and going to all listeners
+	console.log('control message: ' + msg);
+	io.emit('control message', msg);
+	var parsedMessage = msg.split(' ');
+	//short-circuit evaluation means no risk of error if there is no parsedMessage[0]
+	//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_Operators
+	if (parsedMessage.length >= 2 && parsedMessage[0] == '/water') {
+		currentState = parsedMessage[1].split(',');
+		console.log('currentState = ' + currentState);
+		//console.log("currentState.length = " + currentState.length);
+	}
   });
   //unused; this is from original chat demo
   socket.on('message', function(msg){

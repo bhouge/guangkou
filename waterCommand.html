@@ -270,12 +270,16 @@ function textFieldChangeValuePercent(sender) {
 }
 
 function emitControlMessage(cm) {
-	socket.emit('control message', '/water' + cm);
-	console.log(cm);
+	//is this blasphemy?
+	//what if we just ignore the carefully formatted control message and anytime this function is called just send the state?
+	//socket.emit('control message', '/water' + cm);
+	//console.log(cm);
+	socket.emit('control message', '/water ' + currentState);
 	console.log("currentState: " + currentState);
 }
 
 //warning: this data is being defined two places: here and in sliders' original states...
+//would be better to have this drive the default states
 //water state
 var currentState = [0.667, 5.0, 7.0, 0.7, 1.0, 0.9, 1.1];
 //drips state
