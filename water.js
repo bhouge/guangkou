@@ -91,14 +91,15 @@ io.on('connection', function(socket){
 
 				//stream + 36 drip sounds...
 				var numberOfFilesToSend = 37;
-
+				//can't send this here, will set values on objects that haven't been set up yet...
+				//ok, added a check in client that says now you can; stores values until they can be used...
+				socket.emit('control message', "/water " + currentState);
 				socket.emit('sending audio', numberOfFilesToSend);
 				var directoryPrefix = '/audio/compressed/';
 				//fyi __dirname gives the directory of the currently running file
 				//but I don't seem to need it.
-
-	    	var fileToPush = __dirname + directoryPrefix + "stream.mp3";
-    		pushSoundToClient(fileToPush, 'stream', socket);
+				var fileToPush = __dirname + directoryPrefix + "stream.mp3";
+				pushSoundToClient(fileToPush, 'stream', socket);
 
 				for (var drop = 1; drop < 37; drop++) {
 					var fileBufferName;
@@ -109,7 +110,7 @@ io.on('connection', function(socket){
 					}
 					fileToPush = __dirname + directoryPrefix + fileBufferName + '.mp3';
 					//fileToPush = "audio/drip01.ogg";
-	    		pushSoundToClient(fileToPush, fileBufferName, socket);
+					pushSoundToClient(fileToPush, fileBufferName, socket);
 				}
 	    } else if (msg == 'supreme leader') {
 	    	socket.birdType = msg;

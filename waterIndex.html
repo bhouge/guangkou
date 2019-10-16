@@ -87,72 +87,20 @@ socket.on('control message', function(msg){
 			//split it back into an array, then iterate through and compare with our stored state
 			//for every value that is different, format it as the expected command and evaluate normally
 			//console.log("here's the new state we're going to evaluave... " + parsedMessage[1]);
-			var newState = parsedMessage[1].split(',');
-			console.log("newState: " + newState);
-			if (currentState.length != newState.length) {
-				console.log("warning: newState length does not match stored currentState length...");
+			
+			//however, if we set the new state before the synths are initialized, we have problems
+			//therefore let's do a check to see if audio's been loaded, and if so, proceed, if not, store the value for later
+			//when audio is loaded, check for stored value and update
+			//which means breaking update out into separate function
+			
+			
+			newState = parsedMessage[1].split(',');
+			if (buffersAreLoaded) {
+				parseNewState(newState);
+			} else {
+				console.log("storing newState for future parsing: " + newState);
 			}
-			var formattedCommandType;
-			var formattedCommandID;
-			var formattedValue;
-			for (var i = 0; i < currentState.length; i++) {
-				if (newState[i] != currentState[i]) {
-					console.log("newState value: " + newState[i] + "; currentState value: " + currentState[i]);
-					formattedValue = newState[i];
-					if (i < 18) {
-						formattedCommandType = "slider";
-						formattedCommandID = i;
-					} else {
-						//magic number alert! 18 is metro2, 19 is metro1. I am sorry
-						formattedCommandType = "metro";
-						formattedCommandID = 20 - i;
-					}
-					console.log("type: " + formattedCommandType + "; ID: " + formattedCommandID + "; value: " + formattedValue);
-					if (formattedCommandType == "metro") {
-						if (formattedCommandID == 1) {
-							//console.log("attempting to turn water on or off...");
-							if (listenButton.className == "on") {
-								if (formattedValue == '0') {
-									console.log("Turning water metronome off.");
-									if (waterSynth.isPlaying) {
-										waterSynth.stop();
-									}
-								} else {
-									console.log("Turning water metronome on.");
-									//testSound(0);
-									if (!waterSynth.isPlaying) {
-										waterSynth.play();
-									}
-								}
-							}
-						} else {
-							if (listenButton.className == "on") {
-								if (formattedValue == '0') {
-									console.log("Turning drip metronome off.");
-									if (drips.isPlaying) {
-										drips.stop();
-									}
-								} else {
-									console.log("Turning drip metronome on.");
-									//testSound(0);
-									if (!drips.isPlaying) {
-										drips.play();
-									}
-								}
-							}
-						}
-					}
-					if (formattedCommandType == "slider") {
-						//var sliderMsgArray = msgArray[3].split(' ');
-						//var sliderIndex = sliderMsgArray[0];
-						//var sliderValue = sliderMsgArray[1];
-						console.log("slider " + formattedCommandID + ": " + formattedValue);
-						setSliderValue(formattedCommandID, formattedValue);
-					}
-					currentState[i] = newState[i];
-					console.log("currentState: " + currentState);
-				}
-			}
+			
 		}
 	} else {
 		console.log("panic!");
@@ -195,7 +143,7 @@ function testSound(index) {
 	var source = audioCtx.createBufferSource();
 	source.buffer = audioBuffers[index];
 	source.connect(audioCtx.destination);
-  source.start(audioCtx.currentTime);
+ 	source.start(audioCtx.currentTime);
 }
 
 function setupSynth() {
@@ -250,6 +198,9 @@ listenButton.onclick = function() {
 		console.log('testing sound ' + testSoundName);
 		testSound(testSoundName);
 		//drips.play();
+		if (newState.length > 0) {
+			parseNewState(newState);
+		}
 	}
 	listenButton.innerHTML = "Listening 正在听...";
 };
@@ -357,9 +308,79 @@ function stopEverything() {
 	}
 }
 
+function parseNewState(newStateToParse) {
+	//expecting newStateToParse to be an array, right?
+	console.log("newState: " + newState);
+	if (currentState.length != newState.length) {
+		console.log("warning: newState length does not match stored currentState length...");
+	}
+	var formattedCommandType;
+	var formattedCommandID;
+	var formattedValue;
+	for (var i = 0; i < currentState.length; i++) {
+		if (newState[i] != currentState[i]) {
+			console.log("newState value: " + newState[i] + "; currentState value: " + currentState[i]);
+			formattedValue = newState[i];
+			if (i < 18) {
+				formattedCommandType = "slider";
+				formattedCommandID = i;
+			} else {
+				//magic number alert! 18 is metro2, 19 is metro1. I am sorry
+				formattedCommandType = "metro";
+				formattedCommandID = 20 - i;
+			}
+			console.log("type: " + formattedCommandType + "; ID: " + formattedCommandID + "; value: " + formattedValue);
+			if (formattedCommandType == "metro") {
+				if (formattedCommandID == 1) {
+					//console.log("attempting to turn water on or off...");
+					if (listenButton.className == "on") {
+						if (formattedValue == '0') {
+							console.log("Turning water metronome off.");
+							if (waterSynth.isPlaying) {
+								waterSynth.stop();
+							}
+						} else {
+							console.log("Turning water metronome on.");
+							//testSound(0);
+							if (!waterSynth.isPlaying) {
+								waterSynth.play();
+							}
+						}
+					}
+				} else {
+					if (listenButton.className == "on") {
+						if (formattedValue == '0') {
+							console.log("Turning drip metronome off.");
+							if (drips.isPlaying) {
+								drips.stop();
+							}
+						} else {
+							console.log("Turning drip metronome on.");
+							//testSound(0);
+							if (!drips.isPlaying) {
+								drips.play();
+							}
+						}
+					}
+				}
+			}
+			if (formattedCommandType == "slider") {
+				//var sliderMsgArray = msgArray[3].split(' ');
+				//var sliderIndex = sliderMsgArray[0];
+				//var sliderValue = sliderMsgArray[1];
+				console.log("slider " + formattedCommandID + ": " + formattedValue);
+				setSliderValue(formattedCommandID, formattedValue);
+			}
+			currentState[i] = newState[i];
+			console.log("currentState: " + currentState);
+		}
+	}
+}
+
 //ok, initialization is kind of embarrassing, this data is duplicated not only in 3 different files
 //but also between here and where the 2 synths are set-up
 var currentState = [0.667,5,7,0.7,1,0.9,1.1,,,,0.667,0.7,1,0.9,1.1,,,,0,0];
+var nextState = [];
 //setting up our audio context and creating our master gain
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioCtx = new AudioContext();
