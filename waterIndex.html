@@ -26,9 +26,47 @@
 		text-align: center;
 		font:  50px 'Great Vibes', Helvetica, sans-serif;
 	}
+	
+	#perfumeButton{
+		display: inline-block;
+		margin-top: calc(100vh - 150px);
+	}
+	
+	#perfumeOverlay {
+		position: fixed;
+		display: none;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		text-align: center;
+		background-color: rgba(50, 50, 50, 0.98);
+		z-index: 2;
+		cursor: pointer;
+	}
+
+	#perfumeOverlayText{
+	    position: absolute;
+	    top: 50%;
+	    left: 50%;
+	    font-size: 50px;
+	    color: red;
+	    transform: translate(-50%,-50%);
+	    -ms-transform: translate(-50%,-50%);
+	}
+	
+	
 </style>
 </head>
 <body>
+
+
+<div id="perfumeOverlay" style = "text-align: center" onclick="perfumeOff(event)">
+<div id="perfumeOverlayText"></div>
+<button id="perfumeButton" class="off">Accept 接受</button>
+</div>
 
 <div id="controlButtons" style = "text-align: center">
 <button id="listen" class="off" > Loading 正在加载... </button>
@@ -203,6 +241,8 @@ listenButton.onclick = function() {
 		}
 	}
 	listenButton.innerHTML = "Listening 正在听...";
+	var whenToPop = (10 + Math.random() * 10.) * 1000.0;
+	perfumeTimerID = window.setTimeout(popUpPerfume, whenToPop);
 };
 
 function setSliderValue(sliderIndex, sliderValue) {
@@ -377,6 +417,58 @@ function parseNewState(newStateToParse) {
 	}
 }
 
+var perfumeOverlayIsOn = false;
+var perfumeTimerID;
+/*
+峡江清空峡雨急<br>
+寒声夜半萧潇发<br>
+玻璃盆面跳万珠<br>
+一颗一声清入骨<br>
+梦中搔首起来听<br>
+听来听去到天明<br>
+一生听雨今头白<br>
+不识春江夜雨声<br>
+*/
+var perfumeAphorisms = [
+	"江<br>RIVER",
+	"空<br>EMPTY",
+	"声<br>SOUND",
+	"生<br>LIFE",
+	"夜<br>NIGHT",
+	"峡<br>GORGE",
+	"梦<br>DREAM",
+	"雨<br>RAIN"
+	];
+var permissions = ["(tap to confirm)", "(tap to acquiesce)", "(ok)", "(tap your consent)",
+                   "(it is so)", "(agree)", "(y/n)"];
+function popUpPerfume() {
+	var perfumeIndex = Math.floor(Math.random() * perfumeAphorisms.length);
+	var aphorism = perfumeAphorisms[perfumeIndex];
+	var consentIndex = Math.floor(Math.random() * permissions.length);
+	//var ok = permissions[consentIndex];
+	document.getElementById("perfumeOverlayText").innerHTML = "<h2>" + aphorism + "</h2>";
+	document.getElementById("perfumeOverlay").style.display = "block";
+    perfumeOverlayIsOn = true;
+}
+
+function perfumeOff(event) {
+	//alert(event);
+	//var timeSinceStart = Date.now() - startTime;
+	//var xPercent = event.clientX / window.innerWidth;
+	//var yPercent = event.clientY / window.innerHeight;
+	//alert("coordinates: x = " + xPercent + "; y = " + yPercent + ".");
+	//socket.emit('tasteProfile', { 'userID' : randomUserID, 'estimatedServerTime' : Date.now() + averageMSBehindServer, 'x' : xPercent, 'y' : yPercent});
+	//alert("coordinates: x = " +  + "; y = " +  + ".");
+    document.getElementById("perfumeOverlay").style.display = "none";
+    overlayIsOn = false;
+    //do a check; if music is still playing
+    //if it's done, pop up "thank you for your participation.""
+    //random timer every 20 to 40 seconds
+    var whenToPop = (5 + Math.random() * 10.) * 1000.0;
+	perfumeTimerID = window.setTimeout(popUpPerfume, whenToPop);
+}
+
+
 //ok, initialization is kind of embarrassing, this data is duplicated not only in 3 different files
 //but also between here and where the 2 synths are set-up
 var currentState = [0.667,5,7,0.7,1,0.9,1.1,,,,0.667,0.7,1,0.9,1.1,,,,0,0];
@@ -397,6 +489,7 @@ var buffersAreLoaded = false;
 var waterSynth;
 //ditto drips
 var drips;
+
 
 </script>
 
